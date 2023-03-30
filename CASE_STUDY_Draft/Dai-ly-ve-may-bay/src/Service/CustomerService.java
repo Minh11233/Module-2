@@ -1,8 +1,11 @@
 package Service;
 
 import Entity.Users.Customer;
-import Entity.Users.Staff;
-import java.util.ArrayList;
+import ReadAndWrite.ReadFiles;
+import ReadAndWrite.WriteFiles;
+import View.LoginView;
+
+import java.util.List;
 import java.util.Objects;
 import java.util.Scanner;
 
@@ -17,53 +20,74 @@ public class CustomerService extends UserService {
     public static CustomerService getInstance() {
         return customerAccount;
     }
+    public List<Customer> customerAccountsList;
 
     static {
-        customerAccount.Account = new ArrayList<>();
-        customerAccount.Account.add(new Customer("Huong","123"));
-        customerAccount.Account.add(new Customer("Minh","123"));
-        customerAccount.Account.add(new Customer("Khanh","123"));
+        customerAccount.customerAccountsList = ReadFiles.readCustomerAccountsData("src\\Data\\CustomerAccount.csv");
     }
 
-    public void CustomerAbility() {
+    public void customerAbility() {
         System.out.println("Chào mừng bạn quay lại. Bạn muốn làm gì?");
         System.out.println("1. Đặt chuyến bay");
         System.out.println("2. Sửa thông tin cá nhân");
         System.out.println("3. Đổi mật khẩu");
+        System.out.println("4. Đăng xuất");
         int choice = Integer.parseInt(input.nextLine());
         switch (choice) {
             case 1:
                 FlightService.selectDepart();
                 break;
             case 2:
-                ChangeUserInfoService();
+                changeUserInfoService();
                 break;
             case 3:
-                ChangePassword();
+                changePassword();
                 break;
+            default:
+                LoginView.LoginView();
         }
     }
 
-    public void ChangePassword() {
-        for (int i = 0; i < Account.size(); i++) {
-            String accountName = Account.get(i).getAccount();
-            if (Objects.equals(RegisteredUserName, accountName)) {
+    public boolean checkDuplicateUsers(String userName) {
+        for (Customer member: customerAccountsList) {
+            if (Objects.equals(member.getAccount(), userName)) {
+                return true;
+            }
+        } return false;
+    }
+    public boolean checkDuplicatePassword(String password) {
+        for (Customer member: customerAccountsList) {
+            if (Objects.equals(member.getPassWord(), password)) {
+                return true;
+            }
+        } return false;
+    }
+
+    public void changePassword() {
+        int CUSTOMER_ACCOUNT_LIST_LENGTH = customerAccountsList.size();
+        WriteFiles.writeDataToFile("src\\Data\\CustomerAccount.csv","TÀI KHOẢN;MẬT KHẨU\n");
+        for (int i = 0; i < CUSTOMER_ACCOUNT_LIST_LENGTH; i++) {
+            String CURRENT_LOGIN_USER = customerAccountsList.get(i).getAccount();
+            if (Objects.equals(RegisteredUserName, CURRENT_LOGIN_USER)) {
                 String newPassword = prompt("Nhập mật khẩu mới");
                 String checkPassword = prompt("Nhập lại mật khẩu");
                 if (Objects.equals(newPassword, checkPassword)) {
-                    Account.get(i).setPassWord(newPassword);
+                    // gắn mật khẩu mới vào đối tượng
+                    customerAccountsList.get(i).setPassWord(newPassword);
                     System.out.println("Đổi mật khẩu thành công.\nQuay về màn hình chọn...");
-                    CustomerAbility();
+
                 } else {
                     System.out.println("Mật khẩu bạn nhập chưa trùng nhau. Hãy nhập lại");
-                    ChangePassword();
+                    changePassword();
                 }
             }
+            WriteFiles.writeDataToFileWithAppend("src\\Data\\CustomerAccount.csv",customerAccount.customerAccountsList.get(i).writeToFile() + "\n");
         }
+        customerAbility();
     }
-    public void ChangeUserInfoService() {
-        for (int i = 0; i < Account.size(); i++) {
-            String accountName = Account.get(i).getAccount();
+    public void changeUserInfoService() {
+        for (int i = 0; i < customerAccountsList.size(); i++) {
+            String accountName = customerAccountsList.get(i).getAccount();
             if (Objects.equals(RegisteredUserName, accountName)) {
                 System.out.println(UsersInfoService.usersInfo.get(i));
                 System.out.println("Bạn muốn sửa:");
@@ -78,36 +102,36 @@ public class CustomerService extends UserService {
                         String newName = prompt("Nhập tên:");
                         UsersInfoService.usersInfo.get(i).setName(newName);
                         System.out.println(UsersInfoService.usersInfo.get(i));
-                        System.out.println("Hoàn tất sửa thông tin\nQuay trở lại màn hình chọn");
-                        CustomerAbility();
+                        System.out.println("----------------\nHoàn tất sửa thông tin\nQuay trở lại màn hình chọn");
+                        customerAbility();
                         break;
                     case 2:
                         String newDayOfBirth = prompt("Nhập ngày sinh:");
                         UsersInfoService.usersInfo.get(i).setDayOfBirth(newDayOfBirth);
                         System.out.println(UsersInfoService.usersInfo.get(i));
                         System.out.println("Hoàn tất sửa thông tin\nQuay trở lại màn hình chọn...");
-                        CustomerAbility();
+                        customerAbility();
                         break;
                     case 3:
                         String newEmail = prompt("Nhập email:");
                         UsersInfoService.usersInfo.get(i).setEmail(newEmail);
                         System.out.println(UsersInfoService.usersInfo.get(i));
                         System.out.println("Hoàn tất sửa thông tin\nQuay trở lại màn hình chọn");
-                        CustomerAbility();
+                        customerAbility();
                         break;
                     case 4:
                         String newPhoneNumber = prompt("Nhập số điện thoại:");
                         UsersInfoService.usersInfo.get(i).setPhoneNumber(newPhoneNumber);
                         System.out.println(UsersInfoService.usersInfo.get(i));
                         System.out.println("Hoàn tất sửa thông tin\nQuay trở lại màn hình chọn");
-                        CustomerAbility();
+                        customerAbility();
                         break;
                     case 5:
                         String newAddress = prompt("Nhập địa chỉ:");
-                        UsersInfoService.usersInfo.get(i).setPhoneNumber(newAddress);
+                        UsersInfoService.usersInfo.get(i).setAddress(newAddress);
                         System.out.println(UsersInfoService.usersInfo.get(i));
                         System.out.println("Hoàn tất sửa thông tin\nQuay trở lại màn hình chọn");
-                        CustomerAbility();
+                        customerAbility();
                         break;
                 }
             }
@@ -115,7 +139,7 @@ public class CustomerService extends UserService {
     }
 
     @Override
-    public void Register() {
+    public void register() {
         do {
             System.out.println("Đăng ký tên đăng nhập:");
             newUserName = input.nextLine();
@@ -128,19 +152,19 @@ public class CustomerService extends UserService {
             if (checkDuplicateUsers(newUserName)) {
                 System.out.println("Tên đăng nhập đã tồn tại. Vui lòng đăng ký ID khác");
             } else {
-                Account.add(new Staff(newUserName,newPassword));
+                customerAccountsList.add(new Customer(newUserName,newPassword));
                 System.out.println("Bạn đã đăng ký thành công. Chuyển tới màn hình đăng nhập...");
-                Login();
+                login();
             }
         } while (checkDuplicateUsers(newUserName));
     }
     @Override
-    public void Login() {
+    public void login() {
         do {
             RegisteredUserName = prompt("Hãy nhập tên đăng nhập:");
             RegisteredPassword = prompt("Hãy nhập mật khẩu:");
             if (checkDuplicatePassword(RegisteredPassword) && checkDuplicateUsers(RegisteredUserName)) {
-                CustomerAbility();
+                customerAbility();
             } else if (!checkDuplicatePassword(RegisteredPassword)) {
                 System.out.println("Mật khẩu sai, vui lòng nhập lại");
             } else {
@@ -157,10 +181,10 @@ public class CustomerService extends UserService {
         int choice = Integer.parseInt(input.nextLine());
         switch (choice) {
             case 1:
-                Login();
+                login();
                 break;
             case 2:
-                Register();
+                register();
                 break;
             case 3:
                 System.err.println("Vui lòng đăng nhập để sử dụng chức năng này!!!");

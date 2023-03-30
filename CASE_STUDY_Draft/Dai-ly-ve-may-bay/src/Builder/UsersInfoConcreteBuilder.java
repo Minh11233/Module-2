@@ -9,6 +9,7 @@ public class UsersInfoConcreteBuilder implements UsersInfoBuilder {
     private String address;
     private String dayOfBirth;
     private String phoneNumber;
+    private String gender;
     @Override
     public UsersInfoBuilder setName(String name) {
         this.name = name;
@@ -27,18 +28,9 @@ public class UsersInfoConcreteBuilder implements UsersInfoBuilder {
         return this;
     }
 
-    @Override
-    public UsersInfoBuilder setAge(int Age) {
-        return null;
-    }
 
     @Override
-    public UsersInfoBuilder setPhoneNumber(int phoneNumber) {
-        return null;
-    }
-
-    @Override
-    public UsersInfoBuilder setAge(String age) {
+    public UsersInfoBuilder setDayOfBirth(String age) {
         this.dayOfBirth = age;
         return this;
     }
@@ -50,7 +42,13 @@ public class UsersInfoConcreteBuilder implements UsersInfoBuilder {
     }
 
     @Override
+    public UsersInfoBuilder setGender(String gender) {
+        this.gender = gender;
+        return this;
+    }
+
+    @Override
     public UsersInfo build() {
-        return new UsersInfo(name, dayOfBirth, phoneNumber, address, email);
+        return new UsersInfo(name, dayOfBirth, gender, phoneNumber, address, email);
     }
 }

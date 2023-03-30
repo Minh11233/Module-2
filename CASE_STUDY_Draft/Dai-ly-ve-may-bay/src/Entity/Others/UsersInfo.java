@@ -1,16 +1,20 @@
 package Entity.Others;
 
+import Interface.writeToFile;
+
 import java.io.Serializable;
 
-public class UsersInfo implements Serializable {
+public class UsersInfo implements Serializable, writeToFile {
     private String name;
+    private String gender;
     private String email;
     private String address;
     private String dayOfBirth;
     private String phoneNumber;
 
      private int UserID;
-    public UsersInfo(String name, String dayOfBirth, String phoneNumber, String email, String address) {
+    public UsersInfo(String name, String dayOfBirth, String gender, String phoneNumber, String email, String address) {
+        this.gender = gender;
         this.name = name;
         this.email = email;
         this.address = address;
@@ -68,8 +72,14 @@ public class UsersInfo implements Serializable {
 
     @Override
     public String toString() {
-        return "\n\nTHÔNG TIN KHÁCH HÀNG: " + "\nHọ và tên: " + name
+        return "\nTHÔNG TIN KHÁCH HÀNG: " + "\nHọ và tên: " + name + "\nGiới tính: " + gender
                 + "\nNăm sinh: " + dayOfBirth + "\nEmail: " + email + "\nSố điện thoại: "
                 + phoneNumber + "\nĐịa chỉ: " + address;
+    }
+
+    @Override
+    public String writeToFile() {
+        return name + ";" + dayOfBirth + ";" + gender + ";" + phoneNumber
+                + ";" + email + ";" + address;
     }
 }

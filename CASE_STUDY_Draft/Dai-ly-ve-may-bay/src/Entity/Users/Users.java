@@ -1,6 +1,8 @@
 package Entity.Users;
 
-public abstract class Users {
+import Interface.writeToFile;
+
+public abstract class Users implements writeToFile {
     private int ID;
     private String account;
     private String passWord;
@@ -38,10 +40,6 @@ public abstract class Users {
 
     @Override
     public String toString() {
-        return "Tên đăng nhập của bạn là: "+ account + "\nMật khẩu của bạn là: " + passWord;
+        return account + ";" + passWord;
     }
-
-//    protected abstract void selectFlight();
-//    protected abstract void confirmPayment();
-//    protected abstract void changePassword();
 }

@@ -5,6 +5,6 @@ import Interface.IPlane;
 public class LargePlane implements IPlane {
     @Override
     public String getPlane() {
-        return "Large";
+        return "AIRBUS A330";
     }
 }

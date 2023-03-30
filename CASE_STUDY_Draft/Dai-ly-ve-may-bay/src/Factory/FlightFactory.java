@@ -11,9 +11,9 @@ import Factory.Time.Morning;
 
 public class FlightFactory {
     public IPlane getType(String type) {
-        if ("Large".equals(type)) {
+        if ("AIRBUS A330".equals(type)) {
             return new LargePlane();
-        } else if ("Medium".equals(type)) {
+        } else if ("AIRBUS A350".equals(type)) {
             return new MediumPlane();
         } else {
             return new SmallPlane();
