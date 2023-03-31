@@ -141,18 +141,15 @@ public class CustomerService extends UserService {
     @Override
     public void register() {
         do {
-            System.out.println("Đăng ký tên đăng nhập:");
-            newUserName = input.nextLine();
-            System.out.println("Tên đăng nhập của bạn là: " + newUserName);
-
-            System.out.println("Đăng ký password: ");
-            newPassword = input.nextLine();
-            System.out.println("Password: " + newPassword);
-
+            newUserName = prompt("Đăng ký tên đăng nhập:");
+            newPassword = prompt("Đăng ký password: ");
+            String newAccount = "\n" + newUserName + ";" + newPassword;
             if (checkDuplicateUsers(newUserName)) {
                 System.out.println("Tên đăng nhập đã tồn tại. Vui lòng đăng ký ID khác");
             } else {
                 customerAccountsList.add(new Customer(newUserName,newPassword));
+                WriteFiles.writeDataToFileWithAppend("src\\Data\\CustomerAccount.csv",newAccount);
+                customerAccount.customerAccountsList = ReadFiles.readCustomerAccountsData("src\\Data\\CustomerAccount.csv");
                 System.out.println("Bạn đã đăng ký thành công. Chuyển tới màn hình đăng nhập...");
                 login();
             }

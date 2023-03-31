@@ -1,19 +1,2 @@
-		HOÁ ĐƠN
-THÔNG TIN KHÁCH HÀNG: 
-Họ và tên: Nguyễn Quang Minh
-Giới tính: Nam
-Năm sinh: 10/03/1997
-Email: minhxautrai@gmail.com
-Số điện thoại: 0911223666
-Địa chỉ: 21k Nguyễn Văn Trỗi
 
-THÔNG TIN CHUYẾN BAY
-Chuyến bay từ Sài Gòn đến Nha Trang
-Khởi hành vào ngày: 02 April 2023
-Bắt đầu vào lúc: 19:30
-Thời gian trung chuyển: 45 phút
-Máy bay: BOEING 777
-Khoang: Hạng thương gia
-Giá vé: 5,000,000 VNĐ - Bằng chữ: Năm triệu Việt Nam đồng
-Chỗ ngồi: L-02
 
