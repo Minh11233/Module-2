@@ -1,4 +1,4 @@
-package ReadAndWrite;
+package Utils;
 import java.io.*;
 
 public class WriteFiles {

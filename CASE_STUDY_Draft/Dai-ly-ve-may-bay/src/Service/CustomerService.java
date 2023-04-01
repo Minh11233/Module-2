@@ -1,10 +1,10 @@
 package Service;
 
 import Entity.Users.Customer;
-import ReadAndWrite.ReadFiles;
-import ReadAndWrite.WriteFiles;
+import Utils.ReadFiles;
+import Utils.WriteFiles;
+import Utils.Validate;
 import View.LoginView;
-
 import java.util.List;
 import java.util.Objects;
 import java.util.Scanner;
@@ -23,13 +23,13 @@ public class CustomerService extends UserService {
     public List<Customer> customerAccountsList;
 
     static {
-        customerAccount.customerAccountsList = ReadFiles.readCustomerAccountsData("src\\Data\\CustomerAccount.csv");
+        customerAccount.customerAccountsList = ReadFiles.readCustomerAccountsData("D:\\CODEGYM\\Module-2\\CASE_STUDY_Draft\\Dai-ly-ve-may-bay\\src\\Data\\CustomerAccount.csv");
     }
 
     public void customerAbility() {
-        System.out.println("Chào mừng bạn quay lại. Bạn muốn làm gì?");
+        System.out.println("Chào mừng bạn " + RegisteredUserName + " quay lại \uD83D\uDE0D. Bạn muốn làm gì?");
         System.out.println("1. Đặt chuyến bay");
-        System.out.println("2. Sửa thông tin cá nhân");
+        System.out.println("2. Xem thông tin cá nhân");
         System.out.println("3. Đổi mật khẩu");
         System.out.println("4. Đăng xuất");
         int choice = Integer.parseInt(input.nextLine());
@@ -65,7 +65,7 @@ public class CustomerService extends UserService {
 
     public void changePassword() {
         int CUSTOMER_ACCOUNT_LIST_LENGTH = customerAccountsList.size();
-        WriteFiles.writeDataToFile("src\\Data\\CustomerAccount.csv","TÀI KHOẢN;MẬT KHẨU\n");
+        WriteFiles.writeDataToFile("D:\\CODEGYM\\Module-2\\CASE_STUDY_Draft\\Dai-ly-ve-may-bay\\src\\Data\\CustomerAccount.csv","TÀI KHOẢN;MẬT KHẨU\n");
         for (int i = 0; i < CUSTOMER_ACCOUNT_LIST_LENGTH; i++) {
             String CURRENT_LOGIN_USER = customerAccountsList.get(i).getAccount();
             if (Objects.equals(RegisteredUserName, CURRENT_LOGIN_USER)) {
@@ -81,7 +81,15 @@ public class CustomerService extends UserService {
                     changePassword();
                 }
             }
-            WriteFiles.writeDataToFileWithAppend("src\\Data\\CustomerAccount.csv",customerAccount.customerAccountsList.get(i).writeToFile() + "\n");
+            WriteFiles.writeDataToFileWithAppend("D:\\CODEGYM\\Module-2\\CASE_STUDY_Draft\\Dai-ly-ve-may-bay\\src\\Data\\CustomerAccount.csv",customerAccount.customerAccountsList.get(i).writeToFile() + "\n");
+        }
+        customerAbility();
+    }
+    public void updateUserInfoService() {
+        System.out.println("----------------\nHoàn tất sửa thông tin\nQuay trở lại màn hình chọn");
+        WriteFiles.writeDataToFile("D:\\CODEGYM\\Module-2\\CASE_STUDY_Draft\\Dai-ly-ve-may-bay\\src\\Data\\UsersInfo.csv", "HỌ VÀ TÊN;NGÀY SINH;GIỚI TÍNH;SỐ ĐIỆN THOẠI;EMAIL;ĐỊA CHỈ\n");
+        for (int j = 0; j < UsersInfoService.usersInfo.size(); j++) {
+            WriteFiles.writeDataToFileWithAppend("D:\\CODEGYM\\Module-2\\CASE_STUDY_Draft\\Dai-ly-ve-may-bay\\src\\Data\\UsersInfo.csv", UsersInfoService.usersInfo.get(j).writeToFile() + "\n");
         }
         customerAbility();
     }
@@ -92,45 +100,61 @@ public class CustomerService extends UserService {
                 System.out.println(UsersInfoService.usersInfo.get(i));
                 System.out.println("Bạn muốn sửa:");
                 System.out.println("1. Họ và tên");
-                System.out.println("2. Năm sinh");
-                System.out.println("3. Email");
-                System.out.println("4. Số điện thoại");
-                System.out.println("5. Điạ chỉ");
+                System.out.println("2. Giới tính");
+                System.out.println("3. Năm sinh");
+                System.out.println("4. Email");
+                System.out.println("5. Số điện thoại");
+                System.out.println("6. Điạ chỉ");
+                System.out.println("7. Quay lại");
                 int choice = Integer.parseInt(input.nextLine());
                 switch (choice) {
                     case 1:
                         String newName = prompt("Nhập tên:");
                         UsersInfoService.usersInfo.get(i).setName(newName);
                         System.out.println(UsersInfoService.usersInfo.get(i));
-                        System.out.println("----------------\nHoàn tất sửa thông tin\nQuay trở lại màn hình chọn");
-                        customerAbility();
+                        updateUserInfoService();
                         break;
                     case 2:
+                        String newGeder = prompt("Nhập giới tính:");
+                        UsersInfoService.usersInfo.get(i).setGender(newGeder);
+                        System.out.println(UsersInfoService.usersInfo.get(i));
+                        updateUserInfoService();
+                    case 3:
                         String newDayOfBirth = prompt("Nhập ngày sinh:");
                         UsersInfoService.usersInfo.get(i).setDayOfBirth(newDayOfBirth);
                         System.out.println(UsersInfoService.usersInfo.get(i));
-                        System.out.println("Hoàn tất sửa thông tin\nQuay trở lại màn hình chọn...");
-                        customerAbility();
-                        break;
-                    case 3:
-                        String newEmail = prompt("Nhập email:");
-                        UsersInfoService.usersInfo.get(i).setEmail(newEmail);
-                        System.out.println(UsersInfoService.usersInfo.get(i));
-                        System.out.println("Hoàn tất sửa thông tin\nQuay trở lại màn hình chọn");
-                        customerAbility();
+                        updateUserInfoService();
                         break;
                     case 4:
-                        String newPhoneNumber = prompt("Nhập số điện thoại:");
-                        UsersInfoService.usersInfo.get(i).setPhoneNumber(newPhoneNumber);
-                        System.out.println(UsersInfoService.usersInfo.get(i));
-                        System.out.println("Hoàn tất sửa thông tin\nQuay trở lại màn hình chọn");
-                        customerAbility();
-                        break;
+                        String newEmail = prompt("Nhập email:");
+                        if (Validate.validate(newEmail,"EMAIL")) {
+                            UsersInfoService.usersInfo.get(i).setEmail(newEmail);
+                            System.out.println(UsersInfoService.usersInfo.get(i));
+                            updateUserInfoService();
+                            break;
+                        } else {
+                            System.err.println("Invalid Input!!! Please Retry");
+                            changeUserInfoService();
+                        }
                     case 5:
+                        String newPhoneNumber = prompt("Nhập số điện thoại:");
+                        if (Validate.validate(newPhoneNumber,"PHONE_NUMBER")) {
+                            UsersInfoService.usersInfo.get(i).setPhoneNumber(newPhoneNumber);
+                            System.out.println(UsersInfoService.usersInfo.get(i));
+                            updateUserInfoService();
+                            break;
+                        } else {
+                            System.err.println("Invalid Input!!! Please Retry");
+                            changeUserInfoService();
+                        }
+
+                    case 6:
                         String newAddress = prompt("Nhập địa chỉ:");
                         UsersInfoService.usersInfo.get(i).setAddress(newAddress);
                         System.out.println(UsersInfoService.usersInfo.get(i));
-                        System.out.println("Hoàn tất sửa thông tin\nQuay trở lại màn hình chọn");
+                        updateUserInfoService();
+                        break;
+                    case 7:
                         customerAbility();
                         break;
                 }
@@ -148,8 +172,8 @@ public class CustomerService extends UserService {
                 System.out.println("Tên đăng nhập đã tồn tại. Vui lòng đăng ký ID khác");
             } else {
                 customerAccountsList.add(new Customer(newUserName,newPassword));
-                WriteFiles.writeDataToFileWithAppend("src\\Data\\CustomerAccount.csv",newAccount);
-                customerAccount.customerAccountsList = ReadFiles.readCustomerAccountsData("src\\Data\\CustomerAccount.csv");
+                WriteFiles.writeDataToFileWithAppend("D:\\CODEGYM\\Module-2\\CASE_STUDY_Draft\\Dai-ly-ve-may-bay\\src\\Data\\CustomerAccount.csv",newAccount);
+                customerAccount.customerAccountsList = ReadFiles.readCustomerAccountsData("D:\\CODEGYM\\Module-2\\CASE_STUDY_Draft\\Dai-ly-ve-may-bay\\src\\Data\\CustomerAccount.csv");
                 System.out.println("Bạn đã đăng ký thành công. Chuyển tới màn hình đăng nhập...");
                 login();
             }
@@ -175,6 +199,7 @@ public class CustomerService extends UserService {
         System.out.println("1. Đăng nhập");
         System.out.println("2. Đăng ký");
         System.out.println("3. Xem chuyến bay");
+        System.out.println("4. Quay lại");
         int choice = Integer.parseInt(input.nextLine());
         switch (choice) {
             case 1:
@@ -185,6 +210,11 @@ public class CustomerService extends UserService {
                 break;
             case 3:
                 System.err.println("Vui lòng đăng nhập để sử dụng chức năng này!!!");
+                accountFunction();
+            case 4:
+                LoginView.LoginView();
+            default:
+                System.err.println("Invalid Input!!! Please try again");
                 accountFunction();
         }
     }

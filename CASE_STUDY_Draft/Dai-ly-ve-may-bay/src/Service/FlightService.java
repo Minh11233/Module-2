@@ -1,11 +1,14 @@
 package Service;
 
+import Builder.FlightTicketBuilder;
 import Builder.FlightTicketConcreteBuilder;
+import Builder.UsersInfoBuilder;
 import Builder.UsersInfoConcreteBuilder;
 import Interface.*;
 import Factory.FlightFactory;
-import ReadAndWrite.ReadFiles;
-import ReadAndWrite.WriteFiles;
+import Utils.ReadFiles;
+import Utils.WriteFiles;
+import Utils.NlpUtils;
 import View.LoginView;
 
 import java.text.SimpleDateFormat;
@@ -13,7 +16,7 @@ import java.util.*;
 
 public class FlightService {
     private final static Scanner input = new Scanner(System.in);
-    static FlightFactory flightFactory = new FlightFactory();
+    private static FlightFactory flightFactory = new FlightFactory();
     private static IPlane planeType = null;
     private static IClass position = null;
     private static String time = null;
@@ -22,20 +25,18 @@ public class FlightService {
     private static IDepart depart = null;
     private static IDest dest = null;
     private static String flightHour = null;
-    private static String price = null;
+    private static int price = 0;
     private static String dateString = null;
-    private static String CUSTOMER_INFO = null;
-    private static String STORED_LOGIN_USER;
+    private static String customerInfo = null;
+    private static String storedLoginCustomerAccount;
     private static FlightTicketBuilder flightTicketBuilder;
-    private static int CUSTOMER_ACCOUNT_LIST_LENGTH = CustomerService.customerAccount.customerAccountsList.size();
-    ;
-    private static int USERS_INFO_LIST_LENGTH = UsersInfoService.usersInfo.size();
-    ;
-    private static String CURRENT_LOGIN_USER;
-    private static String FLIGHT_INFO;
-
+    private final static int CUSTOMER_ACCOUNT_LIST_LENGTH = CustomerService.customerAccount.customerAccountsList.size();
+    private final static int USERS_INFO_LIST_LENGTH = UsersInfoService.usersInfo.size();
+    private static String currentLoginUser;
+    private static String flightInfo;
+    private static int indexOfCustomerAccount;
     static List<String> flightHourList = ReadFiles.readDataFromFile("D:\\CODEGYM\\Module-2\\CASE_STUDY_Draft\\Dai-ly-ve-may-bay\\src\\Data\\FlightTime.csv");
-    ;
+    static List<String> bookedTicket = ReadFiles.readDataFromFile("D:\\CODEGYM\\Module-2\\CASE_STUDY_Draft\\Dai-ly-ve-may-bay\\src\\Data\\SoldTicket.csv");
 
     public static void selectDepart() {
         do {
@@ -158,14 +159,13 @@ public class FlightService {
                 System.err.println("Invalid Input. Please re-enter your choice");
             }
         } while (true);
-
     }
 
     public static void selectDate() {
         List<String> dateList = new ArrayList<>();
         Date nextDay;
         Date date = new Date();
-        SimpleDateFormat formatter = new SimpleDateFormat("dd MMMM yyyy");
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
         final long MILLISECONDS_IN_1_DAY = 24 * 60 * 60 * 1000;
         final long MILLISECONDS_TODAY = date.getTime();
         System.out.println("Chọn ngày bay:");
@@ -184,13 +184,13 @@ public class FlightService {
         for (int i = 0; i < 7; i++) {
             if (choice == i + 1) {
                 dateString = dateList.get(i);
-                selectTime();
+                selectFlightTime();
             }
         }
         selectDest();
     }
 
-    public static void selectTime() {
+    public static void selectFlightTime() {
         System.out.println("Vui lòng chọn giờ bay");
         for (int i = 0; i < flightHourList.size(); i++) {
             StringBuilder line = new StringBuilder("");
@@ -234,7 +234,7 @@ public class FlightService {
                         selectClass();
                         break;
                     case 4:
-                        selectTime();
+                        selectFlightTime();
                         break;
                     default:
                         System.err.println("Invalid Input. Please re-enter your choice");
@@ -258,12 +258,12 @@ public class FlightService {
                 switch (choice) {
                     case 1:
                         position = flightFactory.getClass("Hạng thương gia");
-                        price = "5,000,000 VNĐ - Bằng chữ: Năm triệu Việt Nam đồng";
+                        price = 5000000;
                         selectLuxurySeat();
                         break;
                     case 2:
                         position = flightFactory.getClass("Hạng phổ thông");
-                        price = "1,000,000 VNĐ - Bằng chữ: Một triệu Việt Nam đồng";
+                        price = 1000000;
                         selectEconomySeat();
                         break;
                     default:
@@ -277,7 +277,7 @@ public class FlightService {
     }
 
     public static void selectLuxurySeat() {
-        String luxurySeat[] = {"[L-01]\t\t", "[L-02]\n\n"};
+        String[] luxurySeat = {"[L-01]\t\t", "[L-02]\n\n"};
         do {
             try {
                 System.out.println("Chọn chỗ ngồi:\n");
@@ -311,7 +311,7 @@ public class FlightService {
     }
 
     public static void selectEconomySeat() {
-        String economySeat[][] = {{"[E-01]\t", "[E-02]"}, {"[E-03]\t", "[E-04]"}};
+        String[][] economySeat = {{"[E-01]\t", "[E-02]"}, {"[E-03]\t", "[E-04]"}};
         do {
             try {
                 System.out.println("Chọn chỗ ngồi:\n");
@@ -389,14 +389,14 @@ public class FlightService {
 
     public static void printInvoice() {
         String FLIGHT_INFO = String.valueOf(flightTicketBuilder.build());
-        WriteFiles.writeDataCustomersInfoToFile("src\\Data\\Invoice.txt", CUSTOMER_INFO);
-        WriteFiles.writeDataFlightInfoToFile("src\\Data\\Invoice.txt", FLIGHT_INFO);
-        System.err.println("CÁM ƠN ĐÃ SỬ DỤNG DỊCH VỤ CỦA CHÚNG TÔI!!!\nQuay trở về màn hình đăng nhập...");
+        WriteFiles.writeDataCustomersInfoToFile("D:\\CODEGYM\\Module-2\\CASE_STUDY_Draft\\Dai-ly-ve-may-bay\\src\\Data\\Invoice.txt", customerInfo);
+        WriteFiles.writeDataFlightInfoToFile("D:\\CODEGYM\\Module-2\\CASE_STUDY_Draft\\Dai-ly-ve-may-bay\\src\\Data\\Invoice.txt", FLIGHT_INFO);
+        WriteFiles.writeDataToFileWithAppend("D:\\CODEGYM\\Module-2\\CASE_STUDY_Draft\\Dai-ly-ve-may-bay\\src\\Data\\Revenue.csv","\n" + flightTicketBuilder.build().writeToFile());
+        System.out.println("CÁM ƠN ĐÃ SỬ DỤNG DỊCH VỤ CỦA CHÚNG TÔI!!!\nQuay trở về màn hình đăng nhập...");
         LoginView.LoginView();
     }
 
     public static void printInfo() {
-
         flightTicketBuilder = new FlightTicketConcreteBuilder()
                 .setPosition(position.getPosition())
                 .setPlane(planeType.getPlane())
@@ -407,67 +407,90 @@ public class FlightService {
                 .setFlightHour(flightHour)
                 .setPrice(price)
                 .setDate(dateString);
-        CURRENT_LOGIN_USER = CustomerService.getInstance().RegisteredUserName;
-        FLIGHT_INFO = String.valueOf(flightTicketBuilder.build());
-        // Code block belows check the case below check if this is a new account
+        String bookedTicket = flightTicketBuilder.build().toString();
+        if (FlightService.bookedTicket.contains(bookedTicket)) {
+            System.out.println("Chỗ ngồi này đã được đặt. Vui lòng chọn ghế khác \uD83D\uDC94");
+            selectClass();
+        } else {
+            FlightService.bookedTicket.add(bookedTicket);
+            WriteFiles.writeDataToFileWithAppend("D:\\CODEGYM\\Module-2\\CASE_STUDY_Draft\\Dai-ly-ve-may-bay\\src\\Data\\SoldTicket.csv", bookedTicket);
+        }
+        currentLoginUser = CustomerService.getInstance().RegisteredUserName;
+        flightInfo = String.valueOf(flightTicketBuilder.build());
         for (int i = 0; i < CUSTOMER_ACCOUNT_LIST_LENGTH; i++) {
-            STORED_LOGIN_USER = CustomerService.customerAccount.customerAccountsList.get(i).getAccount();
-            if (Objects.equals(CURRENT_LOGIN_USER, STORED_LOGIN_USER)
-                    && USERS_INFO_LIST_LENGTH < CUSTOMER_ACCOUNT_LIST_LENGTH) {
-                System.out.println("Vui lòng nhập thông tin cá nhân để hoàn tất việc đặt vé");
-                String name = prompt("Nhập Họ và Tên:");
-                String dayOfBirth = prompt("Nhập ngày tháng năm sinh:");
-                String gender = prompt("Nhập giới tính:");
-                String phoneNumber = prompt("Nhập số điện thoại:");
-                String email = prompt("Nhập email:");
-                String address = prompt("Nhập địa chỉ:");
-                UsersInfoBuilder usersInfoBuilder = new UsersInfoConcreteBuilder()
-                        .setName(name)
-                        .setDayOfBirth(dayOfBirth)
-                        .setGender(gender)
-                        .setPhoneNumber(phoneNumber)
-                        .setEmail(email)
-                        .setAddress(address);
-                CUSTOMER_INFO = usersInfoBuilder.build().toString();
-                WriteFiles.writeDataToFile("src\\Data\\UsersInfo.csv", "HỌ VÀ TÊN;NGÀY SINH;GIỚI TÍNH;SỐ ĐIỆN THOẠI;EMAIL;ĐỊA CHỈ\n");
-                for (int j = 0; j < USERS_INFO_LIST_LENGTH; j++) {
-                    WriteFiles.writeDataToFileWithAppend("src\\Data\\UsersInfo.csv", UsersInfoService.usersInfo.get(j).writeToFile() + "\n");
-                }
-                WriteFiles.writeDataToFileWithAppend("src\\Data\\UsersInfo.csv", usersInfoBuilder.build().writeToFile());
-                System.out.println(usersInfoBuilder.build());
-                System.err.println("VUI LÒNG KIỂM TRA KỸ THÔNG TIN!!!");
-                System.out.println(CUSTOMER_INFO);
-                System.out.println(FLIGHT_INFO);
-                checkInfo();
-            } else if (Objects.equals(CURRENT_LOGIN_USER, STORED_LOGIN_USER)) {
-                CUSTOMER_INFO = String.valueOf(UsersInfoService.usersInfo.get(i));
-                System.out.println("VUI LÒNG KIỂM TRA KỸ THÔNG TIN!!!");
-                System.out.println(CUSTOMER_INFO);
-                System.out.println(FLIGHT_INFO);
-                checkInfo();
-            } else if (!checkAccountIfCustomerOrNot()) {
-                System.out.println("Vui lòng nhập thông tin khách hàng để hoàn tất việc đặt vé");
-                String name = prompt("Nhập Họ và Tên:");
-                String dayOfBirth = prompt("Nhập ngày tháng năm sinh:");
-                String gender = prompt("Nhập giới tính:");
-                String phoneNumber = prompt("Nhập số điện thoại:");
-                String email = prompt("Nhập email:");
-                String address = prompt("Nhập địa chỉ:");
-                UsersInfoBuilder usersInfoBuilder = new UsersInfoConcreteBuilder()
-                        .setName(name)
-                        .setDayOfBirth(dayOfBirth)
-                        .setGender(gender)
-                        .setPhoneNumber(phoneNumber)
-                        .setEmail(email)
-                        .setAddress(address);
-                CUSTOMER_INFO = usersInfoBuilder.build().toString();
-                System.err.println("VUI LÒNG KIỂM TRA KỸ THÔNG TIN!!!");
-                System.out.println(CUSTOMER_INFO);
-                System.out.println(FLIGHT_INFO);
-                checkInfo();
+            storedLoginCustomerAccount = CustomerService.customerAccount.customerAccountsList.get(i).getAccount();
+            boolean isNewCustomerAccount = Objects.equals(currentLoginUser, storedLoginCustomerAccount) && USERS_INFO_LIST_LENGTH < CUSTOMER_ACCOUNT_LIST_LENGTH;
+            boolean isOldCustomerAccount = Objects.equals(currentLoginUser, storedLoginCustomerAccount);
+            ReadFiles.readCustomerAccountsData("D:\\CODEGYM\\Module-2\\CASE_STUDY_Draft\\Dai-ly-ve-may-bay\\src\\Data\\CustomerAccount.csv");
+            if (isNewCustomerAccount) {
+                loginByNewCustomerAccount();
+            } else if (isOldCustomerAccount) {
+                indexOfCustomerAccount = i;
+                loginByOldCustomerAccount();
+            } else if (isStaff()) {
+                loginByStaffAccount();
             }
         }
     }
+    public static void loginByOldCustomerAccount() {
+        storedLoginCustomerAccount = CustomerService.customerAccount.customerAccountsList.get(indexOfCustomerAccount).getAccount();
+        customerInfo = String.valueOf(UsersInfoService.usersInfo.get(indexOfCustomerAccount));
+        System.out.println("VUI LÒNG KIỂM TRA KỸ THÔNG TIN!!!");
+        System.out.println(customerInfo);
+        System.out.println(flightInfo);
+        checkInfo();
+    }
+
+    public static void loginByNewCustomerAccount() {
+        System.out.println("Vui lòng nhập thông tin cá nhân để hoàn tất việc đặt vé");
+        String name = prompt("Nhập Họ và Tên:");
+        String dayOfBirth = prompt("Nhập ngày tháng năm sinh:");
+        String gender = prompt("Nhập giới tính:");
+        String phoneNumber = prompt("Nhập số điện thoại:");
+        String email = prompt("Nhập email:");
+        String address = prompt("Nhập địa chỉ:");
+        UsersInfoBuilder usersInfoBuilder = new UsersInfoConcreteBuilder()
+                .setName(name)
+                .setDayOfBirth(dayOfBirth)
+                .setGender(gender)
+                .setPhoneNumber(phoneNumber)
+                .setEmail(email)
+                .setAddress(address);
+        customerInfo = usersInfoBuilder.build().toString();
+        WriteFiles.writeDataToFile("D:\\CODEGYM\\Module-2\\CASE_STUDY_Draft\\Dai-ly-ve-may-bay\\src\\Data\\UsersInfo.csv", "HỌ VÀ TÊN;NGÀY SINH;GIỚI TÍNH;SỐ ĐIỆN THOẠI;EMAIL;ĐỊA CHỈ\n");
+        for (int j = 0; j < USERS_INFO_LIST_LENGTH; j++) {
+            WriteFiles.writeDataToFileWithAppend("D:\\CODEGYM\\Module-2\\CASE_STUDY_Draft\\Dai-ly-ve-may-bay\\src\\Data\\UsersInfo.csv", UsersInfoService.usersInfo.get(j).writeToFile() + "\n");
+        }
+        WriteFiles.writeDataToFileWithAppend("D:\\CODEGYM\\Module-2\\CASE_STUDY_Draft\\Dai-ly-ve-may-bay\\src\\Data\\UsersInfo.csv", usersInfoBuilder.build().writeToFile());
+        System.out.println(usersInfoBuilder.build());
+        System.out.println("VUI LÒNG KIỂM TRA KỸ THÔNG TIN!!!");
+        System.out.println(customerInfo);
+        System.out.println(flightInfo);
+        checkInfo();
+    }
+
+    public static void loginByStaffAccount() {
+        System.out.println("Vui lòng nhập thông tin khách hàng để hoàn tất việc đặt vé");
+        String name = prompt("Nhập Họ và Tên:");
+        String dayOfBirth = prompt("Nhập ngày tháng năm sinh:");
+        String gender = prompt("Nhập giới tính:");
+        String phoneNumber = prompt("Nhập số điện thoại:");
+        String email = prompt("Nhập email:");
+        String address = prompt("Nhập địa chỉ:");
+        UsersInfoBuilder usersInfoBuilder = new UsersInfoConcreteBuilder()
+                .setName(name)
+                .setDayOfBirth(dayOfBirth)
+                .setGender(gender)
+                .setPhoneNumber(phoneNumber)
+                .setEmail(email)
+                .setAddress(address);
+        customerInfo = usersInfoBuilder.build().toString();
+        System.out.println("VUI LÒNG KIỂM TRA KỸ THÔNG TIN!!!");
+        System.out.println(customerInfo);
+        System.out.println(flightInfo);
+        checkInfo();
+    }
+
     public static void checkInfo() {
         System.out.println("1. Sửa thông tin cá nhân");
         System.out.println("2. Sửa thông tin chuyến bay");
@@ -493,13 +516,105 @@ public class FlightService {
         return input.nextLine();
     }
 
-    public static boolean checkAccountIfCustomerOrNot() {
+    public static boolean isStaff() {
         for (int i = 0; i < CUSTOMER_ACCOUNT_LIST_LENGTH; i++) {
-            STORED_LOGIN_USER = CustomerService.customerAccount.customerAccountsList.get(i).getAccount();
-            if (Objects.equals(CURRENT_LOGIN_USER, STORED_LOGIN_USER)) {
-                return true;
+            storedLoginCustomerAccount = CustomerService.customerAccount.customerAccountsList.get(i).getAccount();
+            if (Objects.equals(currentLoginUser, storedLoginCustomerAccount)) {
+                return false;
             }
         }
-        return false;
+        return true;
     }
+
+    public static void selectOption() {
+        System.out.println("Bạn muốn :");
+        System.out.println("1. Tìm kiếm điểm khởi hành");
+        System.out.println("2. Tim kiếm đích đến");
+        System.out.println("3. Tìm kiếm thời gian khởi hành phù hợp");
+        System.out.println("4. Quay lại");
+        int choice = Integer.parseInt(input.nextLine());
+        switch (choice) {
+            case 1:
+                findDepartLocation();
+                break;
+            case 2:
+                findDestination();
+                break;
+            case 3:
+                findSuitableTimeFlight();
+                break;
+            case 4:
+                LoginView.LoginView();
+                break;
+        }
+    }
+
+    public static void findSuitableTimeFlight() {
+//        flightHourList
+        String flightTime = prompt("Nhập giờ bay");
+        for (int i = 0; i < flightHourList.size(); i++) {
+            if (flightHourList.contains(flightTime)) {
+                System.out.println("Có chuyến bay xuất phát lúc: " + flightTime);
+                selectNextAction();
+            } else {
+                System.out.println("Xin lỗi. Chúng tôi chưa hỗ trợ giờ bay này\nTuy nhiên bạn có thể tham khảo danh sách giờ bay bên dưới:");
+                System.out.println(flightHourList.toString());
+                selectNextAction();
+            }
+        }
+    }
+
+    public static void findDestination() {
+        List<String> Destination = new ArrayList<>();
+        Destination.add("Hà Nội");
+        Destination.add("Sài Gòn");
+        Destination.add("Đà Nẵng");
+        Destination.add("Nha Trang");
+        String Dest = prompt("Nhập đích đến:");
+        for (int i = 0; i < Destination.size(); i++) {
+            String accentedDes = NlpUtils.removeAccent(Dest);
+            String accentedDesInList = NlpUtils.removeAccent(Destination.get(i));
+            if (accentedDes.equalsIgnoreCase(accentedDesInList)) {
+                System.out.println("Có sẵn nhiều chuyến bay đến " + Destination.get(i).toString());
+                selectNextAction();
+            }
+        } System.out.println("Chúng tôi chưa hỗ trợ chuyến bay đến địa điểm này\nVui lòng chọn lại");
+             selectOption();
+    }
+
+    public static void findDepartLocation() {
+        List<String> DepartLocation = new ArrayList<>();
+        DepartLocation.add("Hà Nội");
+        DepartLocation.add("Sài Gòn");
+        DepartLocation.add("Đà Nẵng");
+        DepartLocation.add("Nha Trang");
+        String Depart = prompt("Nhập điểm khởi hành:");
+        for (int i = 0; i < DepartLocation.size(); i++) {
+            String accentedDepart = NlpUtils.removeAccent(Depart);
+            String accentedDepartInList = NlpUtils.removeAccent(DepartLocation.get(i));
+            if (accentedDepart.equalsIgnoreCase(accentedDepartInList)) {
+                System.out.println("Thời gian khởi hành từ " + DepartLocation.get(i).toString() + " là: ");
+                System.out.println(flightHourList.toString());
+                selectNextAction();
+            }
+        }
+        System.out.println("Chúng tôi chưa hỗ trợ chuyến bay từ địa điểm này\nVui lòng chọn lại");
+        selectOption();
+    }
+
+    public static void selectNextAction() {
+        System.out.println("1. Tiến hành đặt vé");
+        System.out.println("2. Quay lại");
+        int choice = Integer.parseInt(input.nextLine());
+        switch (choice) {
+            case 1:
+                System.err.println("BẠN PHẢI ĐĂNG NHẬP ĐỂ THỰC HIỆN CHỨC NĂNG NÀY\nQuay lại màn hình đăng nhập...");
+                LoginView.LoginView();
+                break;
+            case 2:
+                selectOption();
+                break;
+        }
+    }
+
 }

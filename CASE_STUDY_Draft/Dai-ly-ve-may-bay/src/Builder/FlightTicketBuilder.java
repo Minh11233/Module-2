@@ -1,4 +1,4 @@
-package Interface;
+package Builder;
 
 import Entity.Others.FlightTicket;
 public interface FlightTicketBuilder {
@@ -9,7 +9,7 @@ public interface FlightTicketBuilder {
     FlightTicketBuilder setDepart(String depart);
     FlightTicketBuilder setDest(String dest);
     FlightTicketBuilder setFlightHour(String time);
-    FlightTicketBuilder setPrice(String price);
+    FlightTicketBuilder setPrice(int price);
     FlightTicketBuilder setDate(String date);
     FlightTicket build();
 }

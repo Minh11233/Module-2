@@ -7,12 +7,13 @@ import java.io.Serializable;
 public class UsersInfo implements Serializable, writeToFile {
     private String name;
     private String gender;
+
     private String email;
     private String address;
     private String dayOfBirth;
     private String phoneNumber;
-
-     private int UserID;
+    private int count = 0;
+    private int UserID;
     public UsersInfo(String name, String dayOfBirth, String gender, String phoneNumber, String email, String address) {
         this.gender = gender;
         this.name = name;
@@ -20,8 +21,11 @@ public class UsersInfo implements Serializable, writeToFile {
         this.address = address;
         this.dayOfBirth = dayOfBirth;
         this.phoneNumber = phoneNumber;
-        int count = 0;
         this.UserID = ++count;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
     }
     public int getUserID() {
         return UserID;

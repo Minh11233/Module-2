@@ -1,52 +1,19 @@
-
 		HOÁ ĐƠN
-
 THÔNG TIN KHÁCH HÀNG: 
-Họ và tên: Nguyễn Quang Minh
-Năm sinh: 18
-Email: minhdeptrai@gmail.com
-Số điện thoại: 0911223666
-Địa chỉ: 21k Nguyễn Văn Trỗi
+Họ và tên: Hưởng
+Giới tính: 123
+Năm sinh: 123
+Email: 123
+Số điện thoại: 123
+Địa chỉ: 123
 
 THÔNG TIN CHUYẾN BAY
 Chuyến bay từ Sài Gòn đến Hà Nội
-Khởi hành lúc: 09:45
+Khởi hành vào ngày: 01/04/2023
+Bắt đầu vào lúc: 07:15
 Thời gian trung chuyển: 02 tiếng 15 phút
-Máy bay: Large
-Khoang: Hạng phổ thông
-Giá vé: null
-Chỗ ngồi: L-01
-		HOÁ ĐƠN
-
-THÔNG TIN KHÁCH HÀNG: 
-Họ và tên: Nguyễn Quang Minh
-Năm sinh: 18
-Email: minhdeptrai@gmail.com
-Số điện thoại: 0911223666
-Địa chỉ: 21k Nguyễn Văn Trỗi
-
-THÔNG TIN CHUYẾN BAY
-Chuyến bay từ Sài Gòn đến Hà Nội
-Khởi hành lúc: 08:30
-Thời gian trung chuyển: 02 tiếng 15 phút
-Máy bay: Large
+Máy bay: AIRBUS A330
 Khoang: Hạng thương gia
-Giá vé: null
-Chỗ ngồi: L-01
-		HOÁ ĐƠN
+Giá vé: 5000000 VNĐ
+Chỗ ngồi: L-02
 
-THÔNG TIN KHÁCH HÀNG: 
-Họ và tên: Nguyễn Quang Minh
-Năm sinh: 18
-Email: minhdeptrai@gmail.com
-Số điện thoại: 0911223666
-Địa chỉ: 21k Nguyễn Văn Trỗi
-
-THÔNG TIN CHUYẾN BAY
-Chuyến bay từ Sài Gòn đến Hà Nội
-Khởi hành lúc: 07:15
-Thời gian trung chuyển: 02 tiếng 15 phút
-Máy bay: Large
-Khoang: Hạng thương gia
-Giá vé: 5,000,000 VNĐ - Bằng chữ: Năm triệu Việt Nam đồng
-Chỗ ngồi: L-01

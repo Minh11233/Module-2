@@ -1,6 +1,5 @@
 package Builder;
 
-import Interface.UsersInfoBuilder;
 import Entity.Others.UsersInfo;
 
 public class UsersInfoConcreteBuilder implements UsersInfoBuilder {

@@ -1,7 +1,6 @@
 package Builder;
 
 import Entity.Others.FlightTicket;
-import Interface.FlightTicketBuilder;
 
 public class FlightTicketConcreteBuilder implements FlightTicketBuilder {
     private String position;
@@ -11,7 +10,7 @@ public class FlightTicketConcreteBuilder implements FlightTicketBuilder {
     private String depart;
     private String dest;
     private String flightHour;
-    private String price;
+    private int price;
     private String date;
 
     @Override
@@ -57,7 +56,7 @@ public class FlightTicketConcreteBuilder implements FlightTicketBuilder {
     }
 
     @Override
-    public FlightTicketBuilder setPrice(String price) {
+    public FlightTicketBuilder setPrice(int price) {
         this.price = price;
         return this;
     }
