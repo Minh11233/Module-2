@@ -12,7 +12,7 @@ public class UsersInfo implements Serializable, writeToFile {
     private String address;
     private String dayOfBirth;
     private String phoneNumber;
-    private int count = 0;
+    private static int count = 0;
     private int UserID;
     public UsersInfo(String name, String dayOfBirth, String gender, String phoneNumber, String email, String address) {
         this.gender = gender;
@@ -78,7 +78,7 @@ public class UsersInfo implements Serializable, writeToFile {
     public String toString() {
         return "\nTHÔNG TIN KHÁCH HÀNG: " + "\nHọ và tên: " + name + "\nGiới tính: " + gender
                 + "\nNăm sinh: " + dayOfBirth + "\nEmail: " + email + "\nSố điện thoại: "
-                + phoneNumber + "\nĐịa chỉ: " + address;
+                + phoneNumber + "\nĐịa chỉ: " + address + "\nID khách hàng: " + UserID;
     }
 
     @Override

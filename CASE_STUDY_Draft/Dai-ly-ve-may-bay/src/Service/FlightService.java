@@ -572,9 +572,9 @@ public class FlightService {
         Destination.add("Nha Trang");
         String Dest = prompt("Nhập đích đến:");
         for (int i = 0; i < Destination.size(); i++) {
-            String accentedDes = NlpUtils.removeAccent(Dest);
-            String accentedDesInList = NlpUtils.removeAccent(Destination.get(i));
-            if (accentedDes.equalsIgnoreCase(accentedDesInList)) {
+            String destWithoutAccent = NlpUtils.removeAccent(Dest);
+            String destInListWithoutAccent = NlpUtils.removeAccent(Destination.get(i));
+            if (destWithoutAccent.equalsIgnoreCase(destInListWithoutAccent)) {
                 System.out.println("Có sẵn nhiều chuyến bay đến " + Destination.get(i).toString());
                 selectNextAction();
             }
@@ -590,9 +590,9 @@ public class FlightService {
         DepartLocation.add("Nha Trang");
         String Depart = prompt("Nhập điểm khởi hành:");
         for (int i = 0; i < DepartLocation.size(); i++) {
-            String accentedDepart = NlpUtils.removeAccent(Depart);
-            String accentedDepartInList = NlpUtils.removeAccent(DepartLocation.get(i));
-            if (accentedDepart.equalsIgnoreCase(accentedDepartInList)) {
+            String departWithoutAccent = NlpUtils.removeAccent(Depart);
+            String departInListWithoutAccent = NlpUtils.removeAccent(DepartLocation.get(i));
+            if (departWithoutAccent.equalsIgnoreCase(departInListWithoutAccent)) {
                 System.out.println("Thời gian khởi hành từ " + DepartLocation.get(i).toString() + " là: ");
                 System.out.println(flightHourList.toString());
                 selectNextAction();

@@ -2,6 +2,7 @@ package Service;
 
 import Entity.Others.Revenue;
 import Entity.Users.Staff;
+import Utils.NlpUtils;
 import Utils.ReadFiles;
 import Utils.WriteFiles;
 import Utils.Validate;
@@ -22,11 +23,10 @@ public class StaffService extends UserService {
 
     private StaffService() {
     }
-
+    final int CUSTOMER_INFO_LIST_LENGTH = UsersInfoService.usersInfo.size();
     public static StaffService getInstance() {
         return staffAccount;
     }
-
     private static List<Staff> staffAccountsList;
 
     static {
@@ -35,7 +35,7 @@ public class StaffService extends UserService {
 
     public void staffAbility() throws Exception {
         System.out.println("Chào mừng bạn quay lại. Bạn muốn làm gì?");
-        System.out.println("1. Xem thông tin cá nhân");
+        System.out.println("1. Tìm kiếm thông tin khách hàng ");
         System.out.println("2. Thêm xoá giờ bay");
         System.out.println("3. Book vé cho khách hàng");
         System.out.println("4. Xem doanh thu, lợi nhuận");
@@ -43,8 +43,7 @@ public class StaffService extends UserService {
         int choice = Integer.parseInt(input.nextLine());
         switch (choice) {
             case 1:
-                System.err.println("TÍNH NĂNG CHƯA HOÀN THIỆN");
-                staffAbility();
+                findCustomerInfo();
                 break;
             case 2:
                 editFlightTime();
@@ -59,6 +58,55 @@ public class StaffService extends UserService {
                 changePassword();
                 break;
         }
+    }
+
+    private void findCustomerInfo() throws Exception {
+        System.out.println("Tìm kiếm theo:");
+        System.out.println("1. Tên khách hàng:");
+        System.out.println("2. ID khách hàng");
+        System.out.println("3. Quay lại");
+        int choice = Integer.parseInt(input.nextLine());
+        switch (choice) {
+            case 1:
+                findCustomerInfoByName();
+                break;
+            case 2:
+                findCustomerInfoByID();
+                break;
+            case 3:
+                staffAbility();
+                break;
+        }
+    }
+
+    private void findCustomerInfoByID() throws Exception {
+        int CustomerID = Integer.parseInt(prompt("Nhập ID khách hàng"));
+        for (int i = 0; i < CUSTOMER_INFO_LIST_LENGTH; i++) {
+            int availableCustomerID = UsersInfoService.usersInfo.get(i).getUserID();
+            if (CustomerID == availableCustomerID) {
+                String CustomerInfo = UsersInfoService.usersInfo.get(i).toString();
+                System.out.println("TÌM KIẾM HOÀN TẤT!!!");
+                System.out.println(CustomerInfo);
+                findCustomerInfo();
+            }
+        }
+        System.err.println("ID bạn vừa nhập không có trong kho khách hàng.\nVui lòng nhập lại hoặc thử tìm kiếm theo tên!!!");
+        findCustomerInfo();
+    }
+    private void findCustomerInfoByName() throws Exception {
+        String customerName = prompt("Nhập họ và tên khách hàng");
+        for (int i = 0; i < CUSTOMER_INFO_LIST_LENGTH; i++) {
+            String customerNameWithoutAccent = NlpUtils.removeAccent(customerName);
+            String customerNameInListWithoutAccent = NlpUtils.removeAccent(UsersInfoService.usersInfo.get(i).getName());
+            if (customerNameWithoutAccent.equalsIgnoreCase(customerNameInListWithoutAccent)) {
+                String CustomerInfo = UsersInfoService.usersInfo.get(i).toString();
+                System.out.println("TÌM KIẾM HOÀN TẤT!!!");
+                System.out.println(CustomerInfo);
+                findCustomerInfo();
+            }
+        }
+        System.err.println("THÔNG TIN KHÁCH HÀNG KHÔNG CÓ TRONG DỮ LIỆU");
+        findCustomerInfo();
     }
 
     private void reviewRevenueAndProfit() throws Exception {
