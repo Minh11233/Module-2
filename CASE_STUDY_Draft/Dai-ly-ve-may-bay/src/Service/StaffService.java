@@ -28,6 +28,8 @@ public class StaffService extends UserService {
         return staffAccount;
     }
     private static List<Staff> staffAccountsList;
+    private static int inputYear;
+    private static List<Revenue> revenues;
 
     static {
         StaffService.staffAccountsList = ReadFiles.readStaffAccountsData("D:\\CODEGYM\\Module-2\\CASE_STUDY_Draft\\Dai-ly-ve-may-bay\\src\\Data\\StaffAccount.csv");
@@ -52,7 +54,7 @@ public class StaffService extends UserService {
                 FlightService.selectDepart();
                 break;
             case 4:
-                reviewRevenueAndProfit();
+                reviewRevenueAndProfitByYear();
                 break;
             case 5:
                 changePassword();
@@ -105,8 +107,44 @@ public class StaffService extends UserService {
                 findCustomerInfo();
             }
         }
-        System.err.println("THÔNG TIN KHÁCH HÀNG KHÔNG CÓ TRONG DỮ LIỆU");
+        System.out.println("THÔNG TIN KHÁCH HÀNG KHÔNG CÓ TRONG DỮ LIỆU");
         findCustomerInfo();
+    }
+
+    private void reviewRevenueAndProfitByYear() throws Exception {
+        inputYear = Integer.parseInt(prompt("Nhập năm muốn xem doanh thu:"));
+        if (inputYear < 2021) {
+            System.out.println("Năm " + inputYear + " công ty chưa thành lập!!!" );
+            reviewRevenueAndProfitByYear();
+        } else if (inputYear > 2025) {
+            System.out.println("Hợp đồng phần mềm hết hạn năm 2025!!!");
+            reviewRevenueAndProfitByYear();
+        } else if (inputYear == 2021) {
+            revenues = ReadFiles.readRevenuesData("D:\\CODEGYM\\Module-2\\CASE_STUDY_Draft\\Dai-ly-ve-may-bay\\src\\Data\\Revenue\\Revenue2021.csv");
+            reviewRevenueAndProfit();
+        } else if (inputYear == 2022) {
+            revenues = ReadFiles.readRevenuesData("D:\\CODEGYM\\Module-2\\CASE_STUDY_Draft\\Dai-ly-ve-may-bay\\src\\Data\\Revenue\\Revenue2022.csv");
+            reviewRevenueAndProfit();
+        } else if (inputYear == 2023) {
+            revenues = ReadFiles.readRevenuesData("D:\\CODEGYM\\Module-2\\CASE_STUDY_Draft\\Dai-ly-ve-may-bay\\src\\Data\\Revenue\\Revenue.csv");
+            reviewRevenueAndProfit();
+        } else if (inputYear == 2024) {
+            revenues = ReadFiles.readRevenuesData("D:\\CODEGYM\\Module-2\\CASE_STUDY_Draft\\Dai-ly-ve-may-bay\\src\\Data\\Revenue\\Revenue2024.csv");
+            if (revenues.isEmpty()) {
+                System.out.println("Năm " + inputYear + " chưa phát sinh doanh thu");
+                reviewRevenueAndProfitByYear();
+            } else {
+                reviewRevenueAndProfit();
+            }
+        } else if (inputYear == 2025) {
+            revenues = ReadFiles.readRevenuesData("D:\\CODEGYM\\Module-2\\CASE_STUDY_Draft\\Dai-ly-ve-may-bay\\src\\Data\\Revenue\\Revenue2025.csv");
+            if (revenues.isEmpty()) {
+                System.out.println("Năm " + inputYear + " chưa phát sinh doanh thu");
+                reviewRevenueAndProfitByYear();
+            } else {
+                reviewRevenueAndProfit();
+            }
+        }
     }
 
     private void reviewRevenueAndProfit() throws Exception {
@@ -123,25 +161,23 @@ public class StaffService extends UserService {
                 checkTotalRevenueAndProfit();
                 break;
             case 3:
-                staffAbility();
+                reviewRevenueAndProfitByYear();
                 break;
         }
     }
 
     private void checkTotalRevenueAndProfit() throws Exception {
-        List<Revenue> revenues = ReadFiles.readRevenuesData("D:\\CODEGYM\\Module-2\\CASE_STUDY_Draft\\Dai-ly-ve-may-bay\\src\\Data\\Revenue.csv");
         int TotalRevenue = 0;
         for (int i = 0; i < revenues.size(); i++) {
             int subTotalRevenue = Integer.parseInt(revenues.get(i).getIncome());
             TotalRevenue += subTotalRevenue;
         }
-        System.out.println("Doanh thu từ đầu năm đến nay là: " + TotalRevenue + " VNĐ");
-        System.out.println("Lợi nhuận từ đầu năm đến nay là: " + TotalRevenue * PROFIT_RATE + " VNĐ");
+        System.out.println("Doanh thu năm " + inputYear + "là: " +  + TotalRevenue + " VNĐ");
+        System.out.println("Lợi nhuận năm " + inputYear + "là: " + TotalRevenue * PROFIT_RATE + " VNĐ");
         reviewRevenueAndProfit();
     }
 
     private void checkRevenueAndProfitByMonth() throws Exception {
-        List<Revenue> revenues = ReadFiles.readRevenuesData("D:\\CODEGYM\\Module-2\\CASE_STUDY_Draft\\Dai-ly-ve-may-bay\\src\\Data\\Revenue.csv");
         int TotalRevenue = 0;
         int Last_Month_With_Revenue = new SimpleDateFormat("dd/MM/yyyy").parse(revenues.get(revenues.size()-1).getBuyDate()).getMonth() + 1;
         int month = 0;
@@ -160,8 +196,8 @@ public class StaffService extends UserService {
                         TotalRevenue += subTotalRevenue;
                     }
                 }
-                System.out.println("Doanh thu tháng " + inputMonth + " là: " + TotalRevenue + " VNĐ");
-                System.out.println("Lợi nhuận tháng " + inputMonth + " là: " + TotalRevenue * PROFIT_RATE + " VNĐ");
+                System.out.println("Doanh thu tháng " + inputMonth + "/" + inputYear + " là: " + TotalRevenue + " VNĐ");
+                System.out.println("Lợi nhuận tháng " + inputMonth + "/" + inputYear + " là: " + TotalRevenue * PROFIT_RATE + " VNĐ");
                 reviewRevenueAndProfit();
             } else {
                 System.out.println("Tháng " + inputMonth + " chưa cập nhật doanh thu. Vui lòng thử lại");
@@ -198,12 +234,13 @@ public class StaffService extends UserService {
             FlightService.flightHourList.add(newFlightHour);
             // Sort flight time
             FlightService.flightHourList.sort(Comparator.comparing(String::toString));
-            System.err.println("Giờ bay đã được thêm thành công");
+            System.out.println("Giờ bay đã được thêm thành công");
             int FLIGHT_HOUR_LIST = FlightService.flightHourList.size();
             WriteFiles.writeDataToFile("D:\\CODEGYM\\Module-2\\CASE_STUDY_Draft\\Dai-ly-ve-may-bay\\src\\Data\\FlightTime.csv", "");
             for (int i = 0; i < FLIGHT_HOUR_LIST; i++) {
                 WriteFiles.writeDataToFileWithAppend("D:\\CODEGYM\\Module-2\\CASE_STUDY_Draft\\Dai-ly-ve-may-bay\\src\\Data\\FlightTime.csv", FlightService.flightHourList.get(i) + "\n");
             }
+            FlightService.flightHourList = ReadFiles.readDataFromFile("D:\\CODEGYM\\Module-2\\CASE_STUDY_Draft\\Dai-ly-ve-may-bay\\src\\Data\\FlightTime.csv");
             System.out.println(FlightService.flightHourList);
             System.out.println("Đang quay trở về màn hình chính...");
             staffAbility();
@@ -222,17 +259,18 @@ public class StaffService extends UserService {
             if (FlightService.flightHourList.contains(flightHourRemoval)) {
                 System.out.println(FlightService.flightHourList);
                 FlightService.flightHourList.remove(flightHourRemoval);
-                System.err.println("Giờ bay đã được xoá thành công");
+                System.out.println("Giờ bay đã được xoá thành công");
                 int FLIGHT_HOUR_LIST_LENGTH = FlightService.flightHourList.size();
                 WriteFiles.writeDataToFile("D:\\CODEGYM\\Module-2\\CASE_STUDY_Draft\\Dai-ly-ve-may-bay\\src\\Data\\FlightTime.csv", "");
                 for (int i = 0; i < FLIGHT_HOUR_LIST_LENGTH; i++) {
                     WriteFiles.writeDataToFileWithAppend("D:\\CODEGYM\\Module-2\\CASE_STUDY_Draft\\Dai-ly-ve-may-bay\\src\\Data\\FlightTime.csv", FlightService.flightHourList.get(i) + "\n");
                 }
+                FlightService.flightHourList = ReadFiles.readDataFromFile("D:\\CODEGYM\\Module-2\\CASE_STUDY_Draft\\Dai-ly-ve-may-bay\\src\\Data\\FlightTime.csv");
                 System.out.println(FlightService.flightHourList);
                 System.out.println("Đang quay trở về màn hình chính...");
                 staffAbility();
             } else {
-                System.err.println("Giờ bay không có trong hệ thống. Vui lòng nhập lại");
+                System.out.println("Giờ bay không có trong hệ thống. Vui lòng nhập lại");
                 removeFlightHour();
             }
         } else {
@@ -278,6 +316,7 @@ public class StaffService extends UserService {
                 }
             }
             WriteFiles.writeDataToFileWithAppend("D:\\CODEGYM\\Module-2\\CASE_STUDY_Draft\\Dai-ly-ve-may-bay\\src\\Data\\StaffAccount.csv", StaffService.staffAccountsList.get(i).writeToFile() + "\n");
+            staffAccountsList = ReadFiles.readStaffAccountsData("D:\\CODEGYM\\Module-2\\CASE_STUDY_Draft\\Dai-ly-ve-may-bay\\src\\Data\\StaffAccount.csv");
         }
         staffAbility();
     }
@@ -299,6 +338,7 @@ public class StaffService extends UserService {
                 WriteFiles.writeDataToFile("D:\\CODEGYM\\Module-2\\CASE_STUDY_Draft\\Dai-ly-ve-may-bay\\src\\Data\\StaffAccount.csv", "TÀI KHOẢN;MẬT KHẨU\n");
                 for (int i = 0; i < STAFF_ACCOUNT_LIST_LENGTH; i++) {
                     WriteFiles.writeDataToFileWithAppend("D:\\CODEGYM\\Module-2\\CASE_STUDY_Draft\\Dai-ly-ve-may-bay\\src\\Data\\StaffAccount.csv", StaffService.staffAccountsList.get(i).writeToFile() + "\n");
+                    staffAccountsList = ReadFiles.readStaffAccountsData("D:\\CODEGYM\\Module-2\\CASE_STUDY_Draft\\Dai-ly-ve-may-bay\\src\\Data\\StaffAccount.csv");
                 }
                 login();
             }

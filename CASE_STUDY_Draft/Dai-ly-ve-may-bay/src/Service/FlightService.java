@@ -381,8 +381,9 @@ public class FlightService {
             case 5:
                 selectClass();
                 break;
-            default:
-                printInfo();
+            case 6:
+                checkInfo();
+                break;
         }
 
     }
@@ -391,7 +392,7 @@ public class FlightService {
         String FLIGHT_INFO = String.valueOf(flightTicketBuilder.build());
         WriteFiles.writeDataCustomersInfoToFile("D:\\CODEGYM\\Module-2\\CASE_STUDY_Draft\\Dai-ly-ve-may-bay\\src\\Data\\Invoice.txt", customerInfo);
         WriteFiles.writeDataFlightInfoToFile("D:\\CODEGYM\\Module-2\\CASE_STUDY_Draft\\Dai-ly-ve-may-bay\\src\\Data\\Invoice.txt", FLIGHT_INFO);
-        WriteFiles.writeDataToFileWithAppend("D:\\CODEGYM\\Module-2\\CASE_STUDY_Draft\\Dai-ly-ve-may-bay\\src\\Data\\Revenue.csv","\n" + flightTicketBuilder.build().writeToFile());
+        WriteFiles.writeDataToFileWithAppend("D:\\CODEGYM\\Module-2\\CASE_STUDY_Draft\\Dai-ly-ve-may-bay\\src\\Data\\Revenue2023.csv","\n" + flightTicketBuilder.build().writeToFile());
         System.out.println("CÁM ƠN ĐÃ SỬ DỤNG DỊCH VỤ CỦA CHÚNG TÔI!!!\nQuay trở về màn hình đăng nhập...");
         LoginView.LoginView();
     }
@@ -407,13 +408,13 @@ public class FlightService {
                 .setFlightHour(flightHour)
                 .setPrice(price)
                 .setDate(dateString);
-        String bookedTicket = flightTicketBuilder.build().toString();
-        if (FlightService.bookedTicket.contains(bookedTicket)) {
+        String bookedTicketInList = flightTicketBuilder.build().toString();
+        if (FlightService.bookedTicket.contains(bookedTicketInList)) {
             System.out.println("Chỗ ngồi này đã được đặt. Vui lòng chọn ghế khác \uD83D\uDC94");
             selectClass();
         } else {
-            FlightService.bookedTicket.add(bookedTicket);
-            WriteFiles.writeDataToFileWithAppend("D:\\CODEGYM\\Module-2\\CASE_STUDY_Draft\\Dai-ly-ve-may-bay\\src\\Data\\SoldTicket.csv", bookedTicket);
+            FlightService.bookedTicket.add(bookedTicketInList);
+            WriteFiles.writeDataToFileWithAppend("D:\\CODEGYM\\Module-2\\CASE_STUDY_Draft\\Dai-ly-ve-may-bay\\src\\Data\\SoldTicket.csv", bookedTicketInList);
         }
         currentLoginUser = CustomerService.getInstance().RegisteredUserName;
         flightInfo = String.valueOf(flightTicketBuilder.build());
@@ -421,7 +422,6 @@ public class FlightService {
             storedLoginCustomerAccount = CustomerService.customerAccount.customerAccountsList.get(i).getAccount();
             boolean isNewCustomerAccount = Objects.equals(currentLoginUser, storedLoginCustomerAccount) && USERS_INFO_LIST_LENGTH < CUSTOMER_ACCOUNT_LIST_LENGTH;
             boolean isOldCustomerAccount = Objects.equals(currentLoginUser, storedLoginCustomerAccount);
-            ReadFiles.readCustomerAccountsData("D:\\CODEGYM\\Module-2\\CASE_STUDY_Draft\\Dai-ly-ve-may-bay\\src\\Data\\CustomerAccount.csv");
             if (isNewCustomerAccount) {
                 loginByNewCustomerAccount();
             } else if (isOldCustomerAccount) {
@@ -462,6 +462,7 @@ public class FlightService {
             WriteFiles.writeDataToFileWithAppend("D:\\CODEGYM\\Module-2\\CASE_STUDY_Draft\\Dai-ly-ve-may-bay\\src\\Data\\UsersInfo.csv", UsersInfoService.usersInfo.get(j).writeToFile() + "\n");
         }
         WriteFiles.writeDataToFileWithAppend("D:\\CODEGYM\\Module-2\\CASE_STUDY_Draft\\Dai-ly-ve-may-bay\\src\\Data\\UsersInfo.csv", usersInfoBuilder.build().writeToFile());
+        UsersInfoService.usersInfo = ReadFiles.readUsersInfoData("D:\\CODEGYM\\Module-2\\CASE_STUDY_Draft\\Dai-ly-ve-may-bay\\src\\Data\\UsersInfo.csv");
         System.out.println(usersInfoBuilder.build());
         System.out.println("VUI LÒNG KIỂM TRA KỸ THÔNG TIN!!!");
         System.out.println(customerInfo);
@@ -550,7 +551,6 @@ public class FlightService {
     }
 
     public static void findSuitableTimeFlight() {
-//        flightHourList
         String flightTime = prompt("Nhập giờ bay");
         for (int i = 0; i < flightHourList.size(); i++) {
             if (flightHourList.contains(flightTime)) {
@@ -608,7 +608,7 @@ public class FlightService {
         int choice = Integer.parseInt(input.nextLine());
         switch (choice) {
             case 1:
-                System.err.println("BẠN PHẢI ĐĂNG NHẬP ĐỂ THỰC HIỆN CHỨC NĂNG NÀY\nQuay lại màn hình đăng nhập...");
+                System.out.println("BẠN PHẢI ĐĂNG NHẬP ĐỂ THỰC HIỆN CHỨC NĂNG NÀY\nQuay lại màn hình đăng nhập...");
                 LoginView.LoginView();
                 break;
             case 2:

@@ -82,6 +82,7 @@ public class CustomerService extends UserService {
                 }
             }
             WriteFiles.writeDataToFileWithAppend("D:\\CODEGYM\\Module-2\\CASE_STUDY_Draft\\Dai-ly-ve-may-bay\\src\\Data\\CustomerAccount.csv",customerAccount.customerAccountsList.get(i).writeToFile() + "\n");
+            customerAccountsList = ReadFiles.readCustomerAccountsData("D:\\CODEGYM\\Module-2\\CASE_STUDY_Draft\\Dai-ly-ve-may-bay\\src\\Data\\CustomerAccount.csv");
         }
         customerAbility();
     }
@@ -91,6 +92,7 @@ public class CustomerService extends UserService {
         for (int j = 0; j < UsersInfoService.usersInfo.size(); j++) {
             WriteFiles.writeDataToFileWithAppend("D:\\CODEGYM\\Module-2\\CASE_STUDY_Draft\\Dai-ly-ve-may-bay\\src\\Data\\UsersInfo.csv", UsersInfoService.usersInfo.get(j).writeToFile() + "\n");
         }
+        UsersInfoService.usersInfo = ReadFiles.readUsersInfoData("D:\\CODEGYM\\Module-2\\CASE_STUDY_Draft\\Dai-ly-ve-may-bay\\src\\Data\\UsersInfo.csv");
         customerAbility();
     }
     public void changeUserInfoService() {
@@ -155,7 +157,7 @@ public class CustomerService extends UserService {
                         updateUserInfoService();
                         break;
                     case 7:
-                        customerAbility();
+                        changeUserInfoService();
                         break;
                 }
             }
@@ -173,7 +175,7 @@ public class CustomerService extends UserService {
             } else {
                 customerAccountsList.add(new Customer(newUserName,newPassword));
                 WriteFiles.writeDataToFileWithAppend("D:\\CODEGYM\\Module-2\\CASE_STUDY_Draft\\Dai-ly-ve-may-bay\\src\\Data\\CustomerAccount.csv",newAccount);
-                customerAccount.customerAccountsList = ReadFiles.readCustomerAccountsData("D:\\CODEGYM\\Module-2\\CASE_STUDY_Draft\\Dai-ly-ve-may-bay\\src\\Data\\CustomerAccount.csv");
+                customerAccountsList = ReadFiles.readCustomerAccountsData("D:\\CODEGYM\\Module-2\\CASE_STUDY_Draft\\Dai-ly-ve-may-bay\\src\\Data\\CustomerAccount.csv");
                 System.out.println("Bạn đã đăng ký thành công. Chuyển tới màn hình đăng nhập...");
                 login();
             }
